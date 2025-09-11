@@ -27,6 +27,8 @@ typedef struct {
 RF24 radio(CE_PIN, CSN_PIN);
 const byte address[6] = "00001";
 
+void print_payload(packet payload);
+
 void setup() {
   radio.begin();
   radio.openWritingPipe(address);
@@ -75,6 +77,7 @@ void loop() {
 
   // Payload preparation
   radio.write(&p, sizeof(p));
+  print_payload(p);
 }
 
 // For debug use only
