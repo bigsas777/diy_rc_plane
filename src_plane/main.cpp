@@ -1,10 +1,53 @@
+#include <Arduino.h>
+#include <SPI.h>
+#include <RF24.h>
 
-// #define ESC_PIN 0 // TO SET Actually for the plane code
+#define CE_PIN 7
+#define CSN_PIN 8
+#define ESC_PIN 0 // TO SET
 
-// Servo ESC; // Actually for the plane code
+typedef struct {
+    short engine_speed;
+    short right_alieron_pos;
+    short left_alieron_pos;
+} packet;
 
-// ESC.attach(ESC_PIN); // Actually for the plane code
+RF24 radio(CE_PIN, CSN_PIN);
+const byte address[6] = "00001";
+
+// Servo ESC;
+// ESC.attach(ESC_PIN);
+
+void print_payload(packet payload);
+
+void setup() {
+    radio.begin();
+    radio.openReadingPipe(0, address);
+    radio.setPALevel(RF24_PA_MIN);
+    radio.startListening();
+    Serial.begin(9600);
+    Serial.println("Setup effettuato!");
+}
+
+void loop() {
+    if(radio.available()) {
+        packet p;
+        radio.read(&p, sizeof(packet));
+        print_payload(p);
+    }
+}
 
 // In plane's code use ESC.writeMicroseconds() for motor control
 
- // For maximum reach, in the plane set to MIN and enable LNA (default) radio.setPALevel(RF24_PA_MAX);
+// For debug use only
+void print_payload(packet payload) {
+    Serial.println("Ricevuto:");
+    Serial.print("Engine: ");
+    Serial.println(payload.engine_speed);
+    Serial.print("Left: ");
+    Serial.println(payload.left_alieron_pos);
+    Serial.print("Right: ");
+    Serial.println(payload.right_alieron_pos);
+    Serial.print("");
+    delay(100);
+}

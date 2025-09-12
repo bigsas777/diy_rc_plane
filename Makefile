@@ -1,15 +1,30 @@
-.PHONY: plane controller clean
+.PHONY: build upload test clean clean-main
 
-plane:
-	cp src_plane/main.cpp src/main.cpp
-	pio run -e plane -t upload
-	rm -f src/main.cpp
 
-controller:
-	cp src_controller/main.cpp src/main.cpp
-	pio run -e controller -t upload
-	rm -f src/main.cpp
+TARGET ?= plane
+
+SRC_DIR      = src_$(TARGET)
+SRC_MAIN     = $(SRC_DIR)/main.cpp
+DEST_MAIN    = src/main.cpp
+
+build:
+	cp $(SRC_MAIN) $(DEST_MAIN)
+	pio run -e $(TARGET)
+	$(MAKE) clean-main
+
+upload:
+	cp $(SRC_MAIN) $(DEST_MAIN)
+	pio run -e $(TARGET) -t upload
+	$(MAKE) clean-main
+
+test:
+	cp test/main.cpp $(DEST_MAIN)
+	pio run -e test -t upload
+	$(MAKE) clean
 
 clean:
 	pio run -t clean
-	rm -f src/main.cpp
+	$(MAKE) clean-main
+
+clean-main:
+	rm -f $(DEST_MAIN)
