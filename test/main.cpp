@@ -11,12 +11,12 @@ const byte address[6] = "00001";
 int count = 0;
 
 void setup() {
+    Serial.begin(9600);
     Serial.println("Setup iniziato.");
     radio.begin();
     radio.openWritingPipe(address);
     radio.setPALevel(RF24_PA_MAX);
     radio.stopListening();
-    Serial.begin(9600);
     Serial.println("Setup concluso!");
 }
 
