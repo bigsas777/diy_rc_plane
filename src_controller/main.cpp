@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <RF24.h>
+#include <shared.h>
 
 #define ENGINE_STICK_PIN A3
 #define X_ALIERONS_STICK_PIN A1
@@ -71,17 +72,5 @@ void loop() {
 
     // Payload preparation
     radio.write(&p, sizeof(p));
-    print_payload(p);
-}
-
-// For debug use only
-void print_payload(packet payload) {
-    Serial.print("Engine: ");
-    Serial.println(payload.engine_speed);
-    Serial.print("Left: ");
-    Serial.println(payload.left_alieron_pos);
-    Serial.print("Right: ");
-    Serial.println(payload.right_alieron_pos);
-    Serial.print("");
-    delay(100);
+    // print_payload(p);
 }

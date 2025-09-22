@@ -20,6 +20,8 @@ void setup() {
     Serial.println("Setup concluso!");
 }
 
+//! Scrivere codice test servomotori
+
 void loop() {
     if (radio.write(&count, sizeof(count))) {
         Serial.print("Inviato count: ");
