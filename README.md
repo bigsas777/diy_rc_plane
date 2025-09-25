@@ -1,19 +1,25 @@
 # RC Airplane and Transmitter
-
-This repository contains Arduino code for a custom-built RC airplane and its handheld transmitter.  
-The project is focused on motor and servo control for the airplane, and RF communication for transmitting commands from the controller.
+This repository contains Arduino code for a DIY RC airplane and its remote control.  
+The project is a PlatformIO project adapted with Makefile for two codebases for different Arduinos.
 
 For more informations like schematics and pictures visit ...
 
 ## Structure
+Read Makefile for usage.
+
+- **shared**
+  Shared protocol and "debug" function.
+
 - **src_plane/**  
   Code for the airplane, including motor and servo control, and RF signal reception.
 
 - **src_controller/**  
-  Code for the handheld controller, handling command input and RF transmission.
+  Code for the controller, maps user's input into values that the plane understand and sends them via RF transmission.
 
-## Features
-- Motor and servo control on the airplane side  
-- RF communication between transmitter and airplane  
-- Arduino-compatible microcontrollers  
-- nRF24L01 modules  
+## Components
+- Arduino Nano
+- nRF24L01 modules 
+- Joystick modules
+- Brushless motor
+- ESC
+- Servomotors
