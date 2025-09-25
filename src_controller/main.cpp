@@ -9,19 +9,17 @@
 #define CE_PIN 7
 #define CSN_PIN 8
 
-#define MIN_SERVOS_DEGREES 0   // Useless, created only for consistency
-#define MID_SERVOS_DEGREES 90  // Useless, created only for consistency
-#define MAX_SERVOS_DEGREES 180
+#define MIN_RIGHT_SERVO_DEGREES 180 // 180 - 0
+#define MID_RIGHT_SERVO_DEGREES 150 // 180 - 30
+#define MAX_RIGHT_SERVO_DEGREES 110 // 180 - 70
+#define MIN_LEFT_SERVO_DEGREES 0
+#define MID_LEFT_SERVO_DEGREES 30 // Same as right, added for consistency and readability
+#define MAX_LEFT_SERVO_DEGREES 70
 #define MIN_SPEED 1000         // Pulse of 1ms for min RPM on brsuhless motor
 #define MAX_SPEED 2000         // Pulse of 2ms for max RPM
 #define VERTICAL_THRESHOLD 100
 #define HORIZONTAL_THRESHOLD 5
 
-typedef struct {
-    short engine_speed;
-    short right_alieron_pos;
-    short left_alieron_pos;
-} packet;
 
 RF24 radio(CE_PIN, CSN_PIN);
 const byte address[6] = "00001";
@@ -29,11 +27,14 @@ const byte address[6] = "00001";
 void print_payload(packet payload);
 
 void setup() {
+    Serial.begin(9600);
+
+    // Setting up wireless module
     radio.begin();
     radio.openWritingPipe(address);
-    radio.setPALevel(RF24_PA_MAX);
+    radio.setPALevel(RF24_PA_MIN);
+    radio.setDataRate(RF24_250KBPS);
     radio.stopListening();
-    Serial.begin(9600);
 }
 
 void loop() {
@@ -50,24 +51,24 @@ void loop() {
     // Alierons values interpretation
     if (pitch < 512 - VERTICAL_THRESHOLD || pitch > 512 + VERTICAL_THRESHOLD) { // Pitch zone has the priority
         if (pitch < 512) { // Nosedive zone
-            p.right_alieron_pos = MAX_SERVOS_DEGREES;
-            p.left_alieron_pos = MAX_SERVOS_DEGREES;
+            p.right_alieron_pos = MAX_RIGHT_SERVO_DEGREES;
+            p.left_alieron_pos = MAX_LEFT_SERVO_DEGREES;
         } else { // Spin zone (flying straight up)
-            p.right_alieron_pos = MIN_SERVOS_DEGREES;
-            p.left_alieron_pos = MIN_SERVOS_DEGREES;
+            p.right_alieron_pos = MIN_RIGHT_SERVO_DEGREES;
+            p.left_alieron_pos = MIN_LEFT_SERVO_DEGREES;
         }
     } else if (turning < -HORIZONTAL_THRESHOLD || turning > HORIZONTAL_THRESHOLD) { // Turning zone (no pitch zone)
         if (turning < 0) { // Turning right
             short abs_turning = abs(turning);
-            p.right_alieron_pos = map(abs_turning, 0, 512, MID_SERVOS_DEGREES, MAX_SERVOS_DEGREES);
-            p.left_alieron_pos = MID_SERVOS_DEGREES - map(abs_turning, 0, 512, MIN_SERVOS_DEGREES, MID_SERVOS_DEGREES);
+            p.right_alieron_pos = map(abs_turning, 0, 512, MID_RIGHT_SERVO_DEGREES, MAX_RIGHT_SERVO_DEGREES);
+            p.left_alieron_pos = MID_LEFT_SERVO_DEGREES - map(abs_turning, 0, 512, MIN_LEFT_SERVO_DEGREES, MID_LEFT_SERVO_DEGREES);
         } else { // Turning left
-            p.right_alieron_pos = MID_SERVOS_DEGREES - map(turning, 0, 512, MIN_SERVOS_DEGREES, MID_SERVOS_DEGREES);
-            p.left_alieron_pos = map(turning, 0, 512, MID_SERVOS_DEGREES, MAX_SERVOS_DEGREES);
+            p.right_alieron_pos = MID_RIGHT_SERVO_DEGREES - map(turning, 0, 512, MIN_RIGHT_SERVO_DEGREES, MID_RIGHT_SERVO_DEGREES);
+            p.left_alieron_pos = map(turning, 0, 512, MID_LEFT_SERVO_DEGREES, MAX_LEFT_SERVO_DEGREES);
         }
     } else {
-        p.right_alieron_pos = MID_SERVOS_DEGREES;
-        p.left_alieron_pos = MID_SERVOS_DEGREES;
+        p.right_alieron_pos = MID_RIGHT_SERVO_DEGREES;
+        p.left_alieron_pos = MID_LEFT_SERVO_DEGREES;
     }
 
     // Payload preparation
