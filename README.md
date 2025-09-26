@@ -7,7 +7,7 @@ For more informations like schematics and pictures visit ...
 ## Structure
 Read Makefile for usage.
 
-- **shared**
+- **lib/shared/**
   Shared protocol and "debug" function.
 
 - **src_plane/**  
