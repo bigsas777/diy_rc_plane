@@ -2,7 +2,7 @@
 This repository contains Arduino code for a DIY RC airplane and its remote control.  
 The project is a PlatformIO project adapted with Makefile for two codebases for different Arduinos.
 
-For more informations like schematics and pictures visit ...
+For more informations like schematics and pictures visit https://toadsprojects.netlify.app
 
 ## Structure
 Read Makefile for usage.
